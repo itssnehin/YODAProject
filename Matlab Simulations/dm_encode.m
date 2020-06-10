@@ -16,4 +16,4 @@ function output = dm_encode(data, stepSize)
         end
     end
     
-    output = e_n<0;
+    output = e_n>0;

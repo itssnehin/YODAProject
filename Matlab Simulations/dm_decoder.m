@@ -5,7 +5,7 @@ function[Sn]=dm_decoder(StepSize,fs,input)
     xlen=length(input);
     delay(1)=0;
     for i = 1 : xlen
-        if(input(i)==0)
+        if(input(i)==1)
             delay(i+1)=delay(i)+StepSize;
         else
             delay(i+1)=delay(i)-StepSize;
