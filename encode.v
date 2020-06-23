@@ -27,7 +27,7 @@ module encode(
     input start,
     input reset,
     output reg out,
-    output reg [0:7] encoded
+    //output reg [0:7] encoded not necessary anymore
    );
    
    always@(posedge CLK100MHZ) begin
@@ -44,8 +44,8 @@ module encode(
                 out = 0;
             end
             
-            encoded = encoded << 1;
-            encoded = encoded + out;
+            //encoded = encoded << 1;
+            //encoded = encoded + out;
        
        end
        
