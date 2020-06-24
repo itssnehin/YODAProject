@@ -21,9 +21,7 @@
 module filter(
     input CLK100MHZ,
     input signed [7:0] current,
-    input signed [7:0] delay,
-    input signed [7:0] delay2,
-    input signed [7:0] delay3, //4-byte moving avg
+    
     input reset,
     input start,
     output signed [7:0] result
@@ -31,6 +29,11 @@ module filter(
     
     reg[8:0] sum = 0;
     reg [7:0] out = 0;
+    
+    reg signed [7:0] delay = 0;
+    reg signed [7:0] delay2 = 0;
+    reg signed [7:0] delay3 = 0; //4-byte moving avg
+    
     always@(posedge CLK100MHZ) begin
     
         if(reset == 1) begin
@@ -42,7 +45,11 @@ module filter(
             sum = current + delay + delay2 + delay3;
             out = sum >> 2; //divide by 4
         end
-    
+        
+        delay3 = delay2;
+        delay2 = delay;
+        delay = current;
+        
     end
     
     assign result = out;

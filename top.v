@@ -4,31 +4,27 @@ module top(
     input CLK100MHZ, // clk
     input start, // start btn
     input reset, // reset btn
+    output [7:0] val, // value from memory
     output encoded_bit, // encoded bit
-    output [7:0] filtered // filtered decoded result
+    output signed [7:0] decode_out,
+    output signed [7:0] filtered // filtered decoded result
     );
     
     // ------------ stuff for BRAM ------------------------------
     reg ena = 0;
     reg wea = 0;            // not writing so can be low
-    reg [7:0] addra=0;
+    reg [3:0] addra=0;
     reg [7:0] dina=0;      //We're not putting data in, so we can leave this unassigned
-    wire signed [7:0] douta;
+    wire [7:0] douta;
     
     // -------------stuff for encode ----------------------------
-    reg [7:0] delay_enc = 0; // used to store last sample going into encoder
-    wire enc_out; // output of the encoder
     
     //-------------- stuff for decode ---------------------------
-    reg [7:0] delay_dec = 0; // store last sample out from decoder
-    reg [7:0] decode_out = 0; // output of the decoder
     
     
     // ------------- stuff for filter ---------------------------
-    reg [7:0]  delay_dec2 = 0; // store 2nd last sample out from decoder
-    reg [7:0]  delay_dec3 = 0; // store 2nd last sample out from decoder
+   
     // ------------ Modules -------------------------------------
-
     blk_mem_gen_0 BRAM_DUT(
         .clka(CLK100MHZ),     // input wire clka
         .ena(ena),            // input wire ena               // ena = read enable
@@ -41,19 +37,17 @@ module top(
     encode enc(
         .CLK100MHZ(CLK100MHZ),
         .data(douta),
-        .delay(delay_enc),
         .start(start),
         .reset(reset),
-        .out(enc_out)
+        .out(encoded_bit)
     );
     
     
     decode dec (
         .CLK100MHZ(CLK100MHZ),
-        .encode(enc_out),
+        .encode(encoded_bit),
         .reset(reset),
         .start(start),
-        .delay(delay_dec),
         .result(decode_out)
     );
     
@@ -63,9 +57,6 @@ module top(
         .reset(reset),
         .start(start),
         .current(decode_out),
-        .delay(delay_dec),
-        .delay2(delay_dec2),
-        .delay3(delay_dec3),
         .result(filtered)
     );
     
@@ -84,13 +75,12 @@ module top(
     
     // end of each cycle
     always@(negedge CLK100MHZ) begin
-        delay_enc = douta; // blocking update delay_enc first
+        
         addra = addra + 1; // so that this happens afterwards
-        
-        delay_dec3 = delay_dec2;
-        delay_dec2 = delay_dec;
-        delay_dec = decode_out; // update delay val for decoder
-        
+
     end
+    
+    assign val = douta;
+    assign decode_result = decode_out;
         
 endmodule

@@ -23,30 +23,30 @@
 module encode(
     input CLK100MHZ,
     input [7:0] data,
-    input [7:0] delay,
     input start,
     input reset,
-    output reg out,
-    //output reg [0:7] encoded not necessary anymore
+    output reg out
    );
+   
+   reg [7:0] delay = 0;
    
    always@(posedge CLK100MHZ) begin
        
        if (reset == 1) begin
             out = 0;
-            encoded = 0;
        end
-       else if(reset == 0 && start == 1) begin
-            if (data >= delay) begin
-                out = 1;
-            end
-            else begin
-                out = 0;
-            end
+       if(reset == 0 && start == 1) begin
             
-            //encoded = encoded << 1;
-            //encoded = encoded + out;
-       
+            if (data >= delay) begin
+                out <= 1;
+            end
+            if (data < delay) begin
+                out <= 0;
+            end
+            $monitor("%03d    %03d    %b", data, delay, out);
+            
+            delay = data;
+            
        end
        
         

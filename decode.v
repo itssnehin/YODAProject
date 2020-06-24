@@ -25,11 +25,11 @@ module decode(
     input encode, // do 1-bit decoded at a time
     input reset,
     input start,
-    input signed [7:0] delay,  //prevoius output value, need to update delay in main after each 
     output signed [7:0] result
     );
     
 
+    reg signed [7:0] delay = 0;  //prevoius output value, need to update delay in main after each 
 
     reg [7:0] data = 0;
     always@(posedge CLK100MHZ) begin
@@ -42,18 +42,19 @@ module decode(
 
                 if(encode == 1'b1) begin
                   //increment
-                    data = delay + 10;
+                    data = delay + 20;
                 end
                 if(encode == 1'b0) begin
                     // decrement
-                    data = delay - 10;
+                    data = delay - 20;
                 end
             end
+            
+            
+            delay = data;
     end
     
     assign result = data;
     
-    
-    
-    
+       
 endmodule
