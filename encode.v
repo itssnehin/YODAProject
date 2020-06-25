@@ -28,7 +28,7 @@ module encode(
     output reg out
    );
    
-   reg [7:0] delay = 0;
+   reg signed [8:0] delay = 0;
    
    always@(posedge CLK100MHZ) begin
        
@@ -39,14 +39,12 @@ module encode(
             
             if (data >= delay) begin
                 out <= 1;
+                delay <= delay + 20;
             end
             if (data < delay) begin
                 out <= 0;
+                delay <= delay - 20;
             end
-            $monitor("%03d    %03d    %b", data, delay, out);
-            
-            delay = data;
-            
        end
        
         
