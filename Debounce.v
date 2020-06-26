@@ -27,4 +27,4 @@ always @(posedge clk) begin  	//activates every clock edge
 end //always
  //--------------------------------------------
 endmodule
-
+//---------------------------------------------

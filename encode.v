@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 21.06.2020 22:01:38
+// Create Date: 06/23/2020 02:08:59 PM
 // Design Name: 
 // Module Name: encode
 // Project Name: 
@@ -23,26 +23,32 @@
 module encode(
     input CLK100MHZ,
     input [7:0] data,
-    input step,
+    input start,
+    input reset,
     output reg out
-    );
-    
-    
-    reg [13:0] delay = 0;
-    reg [13:0] sum;
-    
-    bin2bcd b(data,sum);
-    integer i=0;
-    always@(posedge CLK100MHZ)begin 
-        if(i<8)begin
-            if(sum >= delay)begin 
-                out = 1'b1;
-                delay = delay + out*step;
+   );
+   
+   reg signed [8:0] delay = 0;
+   
+   always@(posedge CLK100MHZ) begin
+       
+       if (reset == 1) begin
+            out = 0;
+       end
+       if(reset == 0 && start == 1) begin
+            
+            if (data >= delay) begin
+                out <= 1;
+                delay <= delay + 20;
             end
-            else begin 
-                out = 1'b0;
-                delay = delay + (-1)*step;
+            if (data < delay) begin
+                out <= 0;
+                delay <= delay - 20;
             end
-        end
-    end
+       end
+       
+        
+   end
+    
+    
 endmodule
